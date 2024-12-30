@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: JSON.stringify({
                         message: '更新文本收藏',
-                        content: btoa(JSON.stringify(texts, null, 2)),
+                        content: safeBase64Encode(JSON.stringify(texts, null, 2)),
                         sha: fileSha,
                         branch: 'master'
                     })
@@ -109,6 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`更新失败：${error.message}。请检查 Token 权限。`);
             return false;
         }
+    }
+
+    // 对中文字符进行 Base64 编码的安全方法
+    function safeBase64Encode(str) {
+        return btoa(unescape(encodeURIComponent(str)));
     }
 
     // 加载已保存的文本
