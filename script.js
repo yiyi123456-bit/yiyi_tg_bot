@@ -13,19 +13,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const FILE_PATH = 'data/text_collection.json';
     const RAW_FILE_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/${FILE_PATH}`;
 
+    // 调试函数：记录详细日志
+    function debugLog(message, data = null) {
+        console.log(`[TextCollection Debug] ${message}`);
+        if (data) console.log(data);
+    }
+
     // 从 GitHub 获取文本
     async function fetchTextsFromGitHub() {
         try {
-            const response = await fetch(RAW_FILE_URL);
+            debugLog('开始获取文本', { url: RAW_FILE_URL });
+            const response = await fetch(RAW_FILE_URL, {
+                cache: 'no-store'  // 禁用缓存
+            });
+
             if (!response.ok) {
-                console.error('获取文本失败，状态码:', response.status);
+                debugLog('获取文本失败', { 
+                    status: response.status, 
+                    statusText: response.statusText 
+                });
                 return [];
             }
+
             const texts = await response.json();
-            console.log('获取到的文本:', texts);
+            debugLog('成功获取文本', texts);
             return texts;
         } catch (error) {
-            console.error('获取文本时发生错误:', error);
+            debugLog('获取文本时发生错误', error);
             return [];
         }
     }
@@ -34,12 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
     async function updateTextsInGitHub(texts) {
         const githubToken = localStorage.getItem('githubToken');
         if (!githubToken) {
-            console.error('未找到 GitHub Token');
+            debugLog('未找到 GitHub Token');
             alert('未找到 GitHub Token，请重新输入');
             return false;
         }
 
         try {
+            debugLog('开始更新文件', { texts });
+
             // 先获取文件的当前 SHA
             const getShaResponse = await fetch(
                 `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, 
@@ -55,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (getShaResponse.ok) {
                 const fileInfo = await getShaResponse.json();
                 fileSha = fileInfo.sha;
+                debugLog('获取文件 SHA', { sha: fileSha });
             }
 
             // 更新文件
@@ -78,14 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!updateResponse.ok) {
                 const errorBody = await updateResponse.text();
-                console.error('更新文件失败，响应:', errorBody);
+                debugLog('更新文件失败', { 
+                    status: updateResponse.status, 
+                    errorBody 
+                });
                 throw new Error(`更新文件失败：${updateResponse.status}`);
             }
 
-            console.log('成功更新文件');
+            debugLog('成功更新文件');
             return true;
         } catch (error) {
-            console.error('更新文本失败:', error);
+            debugLog('更新文本失败', error);
             alert(`更新失败：${error.message}。请检查 Token 权限。`);
             return false;
         }
@@ -127,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         } catch (error) {
-            console.error('加载文本时发生错误:', error);
+            debugLog('加载文本时发生错误', error);
             alert('加载文本失败，请稍后重试');
         }
     }
@@ -142,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await loadSavedTexts();
             }
         } catch (error) {
-            console.error('删除文本失败:', error);
+            debugLog('删除文本失败', error);
             alert('删除文本失败，请稍后重试');
         }
     }
@@ -186,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await loadSavedTexts();
                 }
             } catch (error) {
-                console.error('保存文本失败:', error);
+                debugLog('保存文本失败', error);
                 alert('保存文本失败，请稍后重试');
             }
         } else {
