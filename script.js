@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data) console.log(data);
     }
 
+    // 对中文字符进行 Base64 编码的安全方法
+    function safeBase64Encode(str) {
+        return btoa(unescape(encodeURIComponent(JSON.stringify(str))));
+    }
+
     // 从 GitHub 获取文本
     async function fetchTextsFromGitHub() {
         try {
@@ -117,11 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 对中文字符进行 Base64 编码的安全方法
-    function safeBase64Encode(str) {
-        return btoa(unescape(encodeURIComponent(JSON.stringify(str))));
-    }
-
     // 加载已保存的文本
     async function loadSavedTexts() {
         try {
@@ -150,12 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 textCollection.appendChild(textElement);
             });
 
-            // 添加删除事件监听器
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const index = e.target.getAttribute('data-index');
+            // 为所有删除按钮添加事件监听器
+            textCollection.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('delete-btn')) {
+                    const index = parseInt(e.target.getAttribute('data-index'), 10);
                     await deleteText(index);
-                });
+                }
             });
         } catch (error) {
             debugLog('加载文本时发生错误', error);
