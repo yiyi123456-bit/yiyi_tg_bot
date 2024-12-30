@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const REPO_OWNER = 'yiyi123456-bit';
     const REPO_NAME = 'yiyi_tg_bot';
     const FILE_PATH = 'data/text_collection.json';
-    const RAW_FILE_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/${FILE_PATH}`;
+    const RAW_FILE_URL = `https://${REPO_OWNER}.github.io/${REPO_NAME}/${FILE_PATH}`;
 
     // 调试函数：记录详细日志
     function debugLog(message, data = null) {
@@ -72,6 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fileInfo = await getShaResponse.json();
                 fileSha = fileInfo.sha;
                 debugLog('获取文件 SHA', { sha: fileSha });
+            } else {
+                debugLog('获取文件 SHA 失败', { 
+                    status: getShaResponse.status, 
+                    statusText: getShaResponse.statusText 
+                });
+                throw new Error(`获取文件 SHA 失败：${getShaResponse.status}`);
             }
 
             // 更新文件
