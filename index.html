@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伊一的小机器人功能收集</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>伊一的小机器人功能收集</h1>
+            <nav>
+                <button id="addTextBtn">添加新文本</button>
+            </nav>
+        </header>
+
+        <main id="textCollection">
+            <!-- 文本条目将dynamically添加到这里 -->
+        </main>
+
+        <div id="textModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>添加新文本</h2>
+                <textarea id="newTextArea" rows="10" placeholder="在这里输入您想保存的文本..."></textarea>
+                <input type="text" id="textTitle" placeholder="为文本添加标题（可选）">
+                <button id="saveTextBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
