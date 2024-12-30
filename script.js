@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: JSON.stringify({
                         message: '更新文本收藏',
-                        content: safeBase64Encode(JSON.stringify(texts, null, 2)),
+                        content: safeBase64Encode(texts),
                         sha: fileSha,
                         branch: 'master'
                     })
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 对中文字符进行 Base64 编码的安全方法
     function safeBase64Encode(str) {
-        return btoa(unescape(encodeURIComponent(str)));
+        return btoa(unescape(encodeURIComponent(JSON.stringify(str))));
     }
 
     // 加载已保存的文本
